@@ -4,16 +4,17 @@ import { useId } from "react";
 
 import css from "./ContactForm.module.css";
 import { useDispatch } from "react-redux";
-import { addContact } from "../../redux/contactsOps";
+import { addContact } from "../../redux/contacts/operations";
+import toast from "react-hot-toast";
 
-const FormSchema = Yup.object().shape({
+export const FormSchema = Yup.object().shape({
   name: Yup.string()
     .min(3, "Too Short!")
-    .max(40, "Too Long!")
+    .max(20, "Too Long!")
     .required("Required"),
   number: Yup.string()
     .min(3, "Too Short!")
-    .max(20, "Too Long!")
+    .max(15, "Too Long!")
     .required("Required"),
 });
 
@@ -24,6 +25,7 @@ const ContactForm = () => {
 
   const handleSubmit = (values, actions) => {
     dispatch(addContact(values));
+    toast.success("Contact added");
     actions.resetForm();
   };
 
@@ -40,7 +42,13 @@ const ContactForm = () => {
         <label className={css.label} htmlFor="nameFieldId">
           Name
         </label>
-        <Field className={css.input} type="text" name="name" id={nameFieldId} />
+        <Field
+          className={css.input}
+          type="text"
+          name="name"
+          id={nameFieldId}
+          placeholder="James Bond"
+        />
         <ErrorMessage
           className={css.errorMessage}
           name="name"
@@ -55,6 +63,7 @@ const ContactForm = () => {
           type="phone"
           name="number"
           id={phoneFieldId}
+          placeholder="+XXX XX-XXX-XXXX"
         />
         <ErrorMessage
           className={css.errorMessage}

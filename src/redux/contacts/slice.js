@@ -1,18 +1,10 @@
-import { createSelector, createSlice } from "@reduxjs/toolkit";
-import { fetchContacts, addContact, deleteContact } from "./contactsOps";
-import { selectNameFilter } from "./filtersSlice";
-
-export const selectContacts = (state) => state.contacts.items;
-export const selectLoading = (state) => state.contacts.loading;
-export const selectError = (state) => state.contacts.error;
-export const selectFilteredContacts = createSelector(
-  [selectContacts, selectNameFilter],
-  (contacts, filter) => {
-    return contacts.filter((contact) =>
-      contact.name.toLowerCase().includes(filter.toLowerCase())
-    );
-  }
-);
+import { createSlice } from "@reduxjs/toolkit";
+import {
+  addContact,
+  deleteContact,
+  fetchContacts,
+  updateContact,
+} from "./operations";
 
 const handleLoading = (state) => {
   state.loading = true;
@@ -27,9 +19,23 @@ export const usersSlice = createSlice({
   name: "contacts",
   initialState: {
     items: [],
+    currentUpdatingContact: null,
     loading: false,
     error: null,
   },
+  reducers: {
+    resetContacts: (state) => {
+      state.items = [];
+      state.currentUpdatingContact = null;
+    },
+    setUpdatingContact: (state, action) => {
+      state.currentUpdatingContact = action.payload;
+    },
+    discardUpdating: (state) => {
+      state.currentUpdatingContact = null;
+    },
+  },
+
   extraReducers: (builder) => {
     builder
       .addCase(fetchContacts.pending, handleLoading)
@@ -55,8 +61,21 @@ export const usersSlice = createSlice({
         );
         state.items.splice(index, 1);
       })
-      .addCase(deleteContact.rejected, handleError);
+      .addCase(deleteContact.rejected, handleError)
+      .addCase(updateContact.pending, handleLoading)
+      .addCase(updateContact.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        state.currentUpdatingContact = null;
+        const index = state.items.findIndex(
+          (item) => item.id === action.payload.id
+        );
+        state.items.splice(index, 1, action.payload);
+      })
+      .addCase(updateContact.rejected, handleError);
   },
 });
 
 export const usersReducer = usersSlice.reducer;
+export const { resetContacts, setUpdatingContact, discardUpdating } =
+  usersSlice.actions;

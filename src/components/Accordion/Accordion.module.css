@@ -1,0 +1,28 @@
+.acc {
+  background-color: #6d87f7 !important;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+  margin-bottom: 15px;
+  padding: 5px;
+}
+
+.acc:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.514);
+}
+
+.summary {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.details {
+  background-color: #ebe48c !important;
+  padding: 20px !important;
+  border-radius: 0 0 5px 5px;
+  font-size: 16px;
+  color: #333;
+}
+.icon {
+  color: #3519d2;
+}
